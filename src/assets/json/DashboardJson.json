@@ -1,0 +1,81 @@
+{
+  "userEmail": "mayur@harman.com",
+  "userRole": "Associate",
+  "task": [
+    {
+      "id": 321,
+      "dueDate": "24/12/2024",
+      "title": "Inventory Stocking",
+      "status": 2,
+      "priority": 3,
+      "assignedTo":""
+    },
+    {
+      "id": 322,
+      "dueDate": "24/12/2024",
+      "title": "Restocking shelves",
+      "status": 2,
+      "priority": 3,
+      "assignedTo":"email@to.com"
+    },
+    {
+      "id": 323,
+      "dueDate": "24/12/2024",
+      "title": "Customer Service",
+      "status": 3,
+      "priority": 2,
+      "assignedTo":""
+    },
+    {
+      "id": 324,
+      "dueDate": "24/12/2024",
+      "title": "Handling store maintainence",
+      "status": 1,
+      "priority": 1,
+      "assignedTo":""
+    }
+  ],
+  "learning": {
+    "rewardPoints": 573,
+    "weeklyTraining": [
+      {
+        "id": 1,
+        "title": "Leadership skills",
+        "completionStatus": "Completed",
+        "progressPercentage": 0
+      },
+      {
+        "id": 2,
+        "title": "Problem solving",
+        "completionStatus": "InProgress",
+        "progressPercentage": 50
+      },
+      {
+        "id": 3,
+        "title": "Conducting meetings",
+        "completionStatus": "YetToStart",
+        "progressPercentage": 0
+      }
+    ],
+    "resources": [
+      {
+        "id": 1,
+        "title": "MPoS on-hands tutorial",
+        "url": "",
+        "fileType": ""
+      },
+      {
+        "id": 2,
+        "title": "Stock Display",
+        "url": "",
+        "fileType": ""
+      },
+      {
+        "id": 3,
+        "title": "Staff general tasks",
+        "url": "",
+        "fileType": ""
+      }
+    ]
+  }
+}

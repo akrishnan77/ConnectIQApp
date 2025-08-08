@@ -1,0 +1,113 @@
+[ {
+  "id": 123,
+  "dueDate": "2024-11-30",
+  "title": "Restocking shelves 3 in aisle c5",
+  "taskDescription": "Hi, this is an example task description to demonstrate data.",
+  "status": "1",
+  "priority": "2",
+  "assignee": "John Doe",
+  "taskCategory": "Development",
+  "checklist": [
+    {
+      "id": 1,
+      "title": "Identify and Gather",
+      "description": "Locate empty or low-stock areas on the shelves. Gather the necessary products from the stockroom.",
+      "status": "Pending",
+      "checklistType": "1",
+      "estimatedTimeInMin": "20",
+      "aiDescription": "FIFO (First-In, First-Out): Always place older stock in front of newer stock to ensure freshness and minimize waste.",
+      "aiDetail": "Data collected on inventory management resource repository",
+      "completed": false,
+      "barcodeData": [
+        {
+          "productId": 101,
+          "productName": "Product A",
+          "productImage": "https://example.com/product-a-image.png"
+        }
+      ],
+      "attachements": [
+        {
+          "id": 1,
+          "imageBase64": "data:image/png;base64,exampleImageDataHere"
+        }
+      ],
+      "items": [
+        {
+          "title": "Grungold Tea",
+          "completed": true
+        },
+        {
+          "title": "The Tea Spot",
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Checklist Item 2",
+      "description": "Verify barcode scanning functionality.",
+      "status": "2",
+      "priority": "1",
+      "checklistType": "2",
+      "aiDescription": "2Sanitize Equipment: Disinfect carts, baskets, and cutting boards.",
+      "aiDetail": "Data collected on inventory management resource repository",
+      "estimatedTimeInMin": "15",
+      "completed": false,
+      "barcodeData": [
+        {
+          "productId": 102,
+          "productName": "Product B",
+          "productImage": "https://example.com/product-b-image.png"
+        }
+      ],
+      "attachements": [
+        {
+          "id": 2,
+          "imageBase64": "data:image/png;base64,exampleImageDataHere"
+        }
+      ],
+
+      "items": [
+        {
+          "title": "Grungold Tea",
+          "completed": true
+        },
+        {
+          "title": "The Tea Spot",
+          "completed": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Checklist Item 3",
+      "description": "Attach relevant documentation for the task.",
+      "status": "0",
+      "priority": "0",
+      "checklistType": "3",
+      "estimatedTimeInMin": "30",
+      "aiDescription": "Sanitize Equipment: Disinfect carts, baskets, and cutting boards.",
+      "aiDetail": "Data collected on inventory management resource repository",
+      "completed": false,
+      "barcodeData": [],
+      "items": [
+        {
+          "title": "Grungold Tea",
+          "completed": true
+        },
+        {
+          "title": "The Tea Spot",
+          "completed": false
+        }
+      ],
+      "attachements": [
+        {
+          "id": 3,
+          "imageBase64": "data:image/png;base64,exampleImageDataHere"
+        }
+      ]
+    }
+  ]
+}
+]
+   
