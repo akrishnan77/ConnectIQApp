@@ -11,7 +11,7 @@ export const msalConfig = {
 };
 
 export const loginRequest = {
-  scopes: ["User.Read", "Tasks.ReadWrite","Tasks.Read"],
+  scopes: ["User.Read", "Tasks.ReadWrite", "Files.ReadWrite"],
 };
 
 export const graphConfig = {

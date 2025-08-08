@@ -1,17 +1,80 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  View, Text, TouchableOpacity, Image, StyleSheet, ScrollView,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView, ActivityIndicator, FlatList } from "react-native";
+import { useMsal } from "@azure/msal-react";
+import { getOneDriveTrainingFiles } from "../../graph";
 import { Toolbar } from "../../components/nrf_app/Toolbar"; // Import the common header component
+import { useNavigate } from "react-router-dom";
+
+// --- Icon Imports ---
+const fileIcons = {
+  "application/pdf": require("../../assets/images/home/icon_pdf.png"),
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": require("../../assets/images/home/icon_resources.png"), // Assuming docx
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": require("../../assets/images/home/icon_resources.png"), // Assuming pptx
+  "video/mp4": require("../../assets/images/home/icon_media.png"),
+  default: require("../../assets/images/home/icon_book.png"),
+};
+
+const getFileIcon = (mimeType) => {
+  return fileIcons[mimeType] || fileIcons["default"];
+};
 
 const InventoryManagementScreen = () => {
+  const { instance, accounts } = useMsal();
+  const [trainingFiles, setTrainingFiles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [expandedSection, setExpandedSection] = useState("");
   const navigate = useNavigate();
 
   const toggleSection = (section) => {
     setExpandedSection((prev) => (prev === section ? "" : section));
   };
+
+  useEffect(() => {
+    const fetchTrainingFiles = async () => {
+      if (accounts.length > 0) {
+        try {
+          const request = {
+            scopes: ["Files.ReadWrite"],
+            account: accounts[0],
+          };
+          const response = await instance.acquireTokenSilent(request);
+          const filesData = await getOneDriveTrainingFiles(response.accessToken);
+
+          if (filesData && !filesData.error) {
+            setTrainingFiles(filesData);
+          } else {
+            setError(filesData.error?.message || "Failed to fetch training files.");
+          }
+        } catch (e) {
+          setError(e.message);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    fetchTrainingFiles();
+  }, [instance, accounts]);
+
+  const openFile = (fileUrl) => {
+    // In a real web app, you'd use window.open(fileUrl, '_blank')
+    // For this environment, we'll just log it.
+    console.log("Attempting to open file:", fileUrl);
+    alert(`Opening file: ${fileUrl}`);
+  };
+
+  const renderFile = ({ item }) => (
+    <TouchableOpacity style={styles.fileItem} onPress={() => openFile(item.webUrl)}>
+      <Image source={getFileIcon(item.file.mimeType)} style={styles.fileIcon} />
+      <View style={styles.fileInfo}>
+        <Text style={styles.fileName}>{item.name}</Text>
+        <Text style={styles.fileSize}>{(item.size / 1024).toFixed(2)} KB</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -115,6 +178,33 @@ const InventoryManagementScreen = () => {
               </View>
             )}
           </TouchableOpacity>
+        </View>
+
+        {/* Training Files Section */}
+        <View style={styles.trainingFilesSection}>
+          <Text style={styles.trainingFilesTitle}>Training Files:</Text>
+
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+          ) : error ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          ) : trainingFiles.length > 0 ? (
+            <FlatList
+              data={trainingFiles}
+              renderItem={renderFile}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={styles.list}
+            />
+          ) : (
+            <View style={styles.noFilesContainer}>
+              <Text>No training files found in your OneDrive.</Text>
+              <Text style={styles.subText}>
+                Please upload files to the /Apps/ConnectIQApp/Training folder.
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* Start Training Button */}
@@ -239,6 +329,72 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#ffffff",
     fontWeight: "bold",
+  },
+  trainingFilesSection: {
+    marginTop: 24,
+  },
+  trainingFilesTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 12,
+  },
+  loader: {
+    marginTop: 50,
+  },
+  list: {
+    padding: 20,
+  },
+  fileItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  fileIcon: {
+    width: 40,
+    height: 40,
+    marginRight: 15,
+  },
+  fileInfo: {
+    flex: 1,
+  },
+  fileName: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  fileSize: {
+    fontSize: 12,
+    color: "#666",
+    marginTop: 4,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+  },
+  noFilesContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  subText: {
+    marginTop: 10,
+    color: "#666",
+    textAlign: "center",
   },
 });
 
