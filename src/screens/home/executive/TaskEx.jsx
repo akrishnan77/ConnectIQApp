@@ -11,7 +11,8 @@ const Task = ({ task }) => {
 
     // Handle Learning click
     const handleItemClick = (item, index) => {
-        navigate(`/TaskSummary/${item.id}`);
+        // Route is defined as "/taskSummary/:taskIdnew" (lowercase); ensure casing matches
+        navigate(`/taskSummary/${item.id}`);
     };
 
     const handleAddPress = () => {
