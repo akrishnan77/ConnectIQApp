@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import TaskDetails from "./task/TaskDetails";
@@ -29,6 +29,16 @@ export default function Main() {
     //     initiateLoginEndpoint: config.initiateLoginEndpoint,
     //     clientId: config.clientId,
     // });
+    const menu = [
+        { id: 'home', title: 'Home', icon: 'home', path: '/home' },
+        { id: 'task', title: 'Task', icon: 'task', path: '/task' },
+        { id: 'report', title: 'Report', icon: 'report', path: '/report' },
+        { id: 'training', title: 'Training', icon: 'training', path: '/training' },
+        { id: 'chatbot', title: 'Chatbot', icon: 'chatbot', path: '/chatbot' },
+    ];
+
+    const [activeMenu, setActiveMenu] = useState(menu[0]);
+
     return (
         // <TeamsFxContext.Provider value={{ theme, themeString, teamsUserCredential }}>
         //     <FluentProvider

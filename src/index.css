@@ -5,8 +5,10 @@
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  overflow: hidden;
+  /* Allow the page to scroll vertically and avoid horizontal clipping on small screens */
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
@@ -18,4 +20,10 @@ body {
   body {
     width: auto;
   }
+}
+
+/* Ensure media doesn’t overflow the viewport on small screens */
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
 }
