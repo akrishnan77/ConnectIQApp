@@ -21,12 +21,12 @@ export default function LandingGrid({ userName, onSelect }: { userName?: string;
         <Image source={require('../../../assets/images/home/icon_bot.png')} style={styles.iconSm} />
         <Image source={require('../../../assets/images/home/icon_notification.png')} style={[styles.iconSm, { marginLeft: 16 }]} />
       </View>
-      <Image source={require('../../../assets/images/home/icon_harman_banner2.png')} style={styles.banner} />
       <FlatList
         data={gridItems}
         numColumns={3}
         keyExtractor={(item, idx) => `${item.title}-${idx}`}
-        contentContainerStyle={styles.grid}
+  ListHeaderComponent={<Image source={require('../../../assets/images/home/icon_harman_banner2.png')} style={styles.banner} />}
+  contentContainerStyle={[styles.grid, { paddingBottom: 24 }]}
         renderItem={({ item, index }) => (
           <TouchableOpacity style={styles.card} onPress={() => onSelect(index, item.title)}>
             <Image source={item.image} style={styles.cardImage} />

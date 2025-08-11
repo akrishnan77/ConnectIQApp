@@ -34,3 +34,16 @@ For Expo AuthSession (no native modules), we’ll use the system browser with a 
 ## Notes
 - This is a starter. Integrate more screens and reuse logic from the web app.
 - For production Play Store, build an AAB: `eas build -p android` (requires EAS setup).
+
+## Redirects (Expo Go vs Dev Client)
+- Dev client/native: use `connectiq://auth` and add that Mobile redirect URI in Azure.
+- Expo Go: either use the Expo Auth Proxy (recommended, add `https://auth.expo.io/@anonymous/connectiq-mobile` in Azure),
+  or explicitly override with your exp:// URL.
+
+To force an exp:// redirect (Expo Go), set in `app.json` under `expo.extra`:
+
+```
+"expRedirectUri": "exp://j_bv00o-anonymous-8081.exp.direct/--/auth"
+```
+
+When `expRedirectUri` is set, the app will use it and disable the proxy.

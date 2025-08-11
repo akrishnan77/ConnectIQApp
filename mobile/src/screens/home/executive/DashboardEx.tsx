@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Image, Text, TouchableOpacity, View, StyleSheet, ScrollView } from 'react-native';
 import { Card } from '../../../ui/Card';
 import { Toolbar } from '../../../ui/Toolbar';
 
@@ -7,7 +7,7 @@ export default function DashboardEx({ onViewTasks, showToolbar = true, onBack }:
   return (
     <View style={{ flex: 1 }}>
   {showToolbar && <Toolbar title="Dashboard" onBack={onBack} />}
-      <View style={{ padding: 16 }}>
+  <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 24 }}>
         <Card>
           <View style={[styles.headerRow]}>
             <Image source={require('../../../../assets/images/home/icon_task_list.png')} style={styles.iconSmall} />
@@ -17,7 +17,7 @@ export default function DashboardEx({ onViewTasks, showToolbar = true, onBack }:
             <Text style={styles.buttonText}>View</Text>
           </TouchableOpacity>
         </Card>
-      </View>
+  </ScrollView>
     </View>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { ActivityIndicator, Image, Text, TouchableOpacity, View, StyleSheet, ScrollView } from 'react-native';
 import { Card } from '../../ui/Card';
 import { AnnouncementCard, WorkdayCard } from '../../components/nrf_app/Card';
 import { Toolbar } from '../../ui/Toolbar';
@@ -18,7 +18,7 @@ export default function Dashboard({ token, onViewTasks, showToolbar = true, onBa
   return (
     <View style={{ flex: 1 }}>
   {showToolbar && <Toolbar title="Dashboard" onBack={onBack} />}
-      <View style={{ padding: 16 }}>
+  <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 24 }}>
         {/* Announcements */}
         <AnnouncementCard
           style={{ marginBottom: 8 }}
@@ -29,7 +29,7 @@ export default function Dashboard({ token, onViewTasks, showToolbar = true, onBa
           onSeeAll={() => {}}
         />
         {/* Shift card placeholder to mirror layout */}
-        <Card>
+  <Card>
           <View style={[styles.headerRow]}>
             <Image source={require('../../../assets/images/home/icon_shift.png')} style={styles.iconSmall} />
             <Text style={typography.headingSm}>Shift</Text>
@@ -67,7 +67,7 @@ export default function Dashboard({ token, onViewTasks, showToolbar = true, onBa
 
   {/* Workday */}
   <WorkdayCard subtitle="Next shift starts tomorrow 8:00 AM - 5:00 PM" onOpen={() => {}} />
-      </View>
+      </ScrollView>
     </View>
   );
 }

@@ -8,6 +8,8 @@ const TENANT = extra.tenant || 'common';
 const SCOPES: string[] = Array.isArray(extra.scopes) ? extra.scopes : String(extra.scopes || 'User.Read').split(',');
 const REDIRECT_SCHEME = extra.redirectScheme || 'connectiq';
 const REDIRECT_PATH = extra.redirectPath || 'auth';
+// Optional: explicit override for Expo deep link (e.g. exp://<host>/--/auth)
+const EXP_REDIRECT_URI_OVERRIDE: string | undefined = extra.expRedirectUri || undefined;
 
 const discovery = {
   authorizationEndpoint: `https://login.microsoftonline.com/${TENANT}/oauth2/v2.0/authorize`,
@@ -16,12 +18,23 @@ const discovery = {
 };
 
 export async function getTokenAsync(): Promise<string> {
-  const isExpoGo = (Constants as any).appOwnership === 'expo';
-  // In Expo Go we must use the proxy (exp://). In dev client/standalone, use native scheme.
-  const redirectUri = isExpoGo
-    ? AuthSession.makeRedirectUri({})
-    : makeRedirectUri({ scheme: REDIRECT_SCHEME, path: REDIRECT_PATH });
-  console.log(`${isExpoGo ? 'Expo Go' : 'Native'} Auth redirect URI:`, redirectUri);
+  const isExpoGo = (Constants as any).executionEnvironment === 'storeClient';
+  // Redirect strategy:
+  // - If explicit exp:// override is provided, use it with no proxy (works only if Azure accepts that URI).
+  // - Otherwise: Expo Go uses Expo Auth Proxy (Azure redirect should be https://auth.expo.io/@anonymous/<slug>),
+  //   and dev client/standalone uses native scheme connectiq://auth (no proxy).
+  let redirectUri = makeRedirectUri({ scheme: REDIRECT_SCHEME, path: REDIRECT_PATH });
+  let useProxy = isExpoGo;
+
+  if (EXP_REDIRECT_URI_OVERRIDE) {
+    redirectUri = EXP_REDIRECT_URI_OVERRIDE;
+    useProxy = false;
+    console.log('Using explicit redirect override:', redirectUri);
+  } else if (isExpoGo) {
+    console.log('Expo Go using Expo Auth Proxy');
+  } else {
+    console.log('Native scheme redirect URI:', redirectUri);
+  }
 
   const request = new AuthSession.AuthRequest({
     clientId: MS_CLIENT_ID,
@@ -32,7 +45,7 @@ export async function getTokenAsync(): Promise<string> {
   });
 
   await request.makeAuthUrlAsync(discovery);
-  const result = await request.promptAsync(discovery);
+  const result = await (request as any).promptAsync(discovery, { useProxy });
 
   if (result.type !== 'success' || !result.params.code) {
     throw new Error('Authentication failed');

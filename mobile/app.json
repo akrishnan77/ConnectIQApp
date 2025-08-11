@@ -3,7 +3,7 @@
     "name": "ConnectIQ",
     "slug": "connectiq-mobile",
     "scheme": "connectiq",
-    "version": "0.1.0",
+    "version": "0.1.0",   
     "orientation": "portrait",
     "icon": "",
     "splash": {
@@ -37,7 +37,8 @@
       "tenant": "common",
       "scopes": ["User.Read", "Tasks.ReadWrite", "Files.ReadWrite"],
       "redirectScheme": "connectiq",
-      "redirectPath": "auth"
+  "redirectPath": "auth",
+  "expRedirectUri": "exp://j_bv00o-anonymous-8081.exp.direct/--/auth"
     }
   }
 }
