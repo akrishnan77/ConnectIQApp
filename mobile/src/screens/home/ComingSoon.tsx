@@ -6,7 +6,7 @@ export default function ComingSoon({ route, navigation }: { route: any; navigati
   const title = route?.params?.title || 'Coming Soon';
   return (
     <View style={{ flex: 1 }}>
-      <Toolbar title={title} onBack={() => navigation.goBack()} />
+  <Toolbar title={title} onBack={() => navigation.goBack()} variant="primary" />
       <View style={styles.mainContainer}>
         <Image source={require('../../../assets/images/home/img_comming_soon.png')} style={{ width: 150, height: 150 }} />
         <Text style={styles.titleBig}>Coming Soon!</Text>

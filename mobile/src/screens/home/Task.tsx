@@ -3,8 +3,11 @@ import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity,
 import { colors, typography } from '../../theme';
 import { FloatingButtonAdd } from '../../ui/FloatingButton';
 import { getTodoTasks } from '../../graph';
+import { Toolbar } from '../../ui/Toolbar';
+import { useNavigation } from '@react-navigation/native';
 
-export default function TaskScreen({ token, onOpenTask }: { token: string; onOpenTask: (id: string, title?: string) => void }) {
+export default function TaskScreen({ token, onOpenTask, onSignOut }: { token: string; onOpenTask: (id: string, title?: string) => void; onSignOut?: () => void }) {
+  const navigation = useNavigation<any>();
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -125,6 +128,7 @@ export default function TaskScreen({ token, onOpenTask }: { token: string; onOpe
 
   return (
     <View style={styles.mainContainer}>
+  <Toolbar title="Tasks" onBack={() => navigation.goBack()} variant="primary" onSignOut={onSignOut} />
       <View style={[styles.rowHeader, { padding: 16, marginTop: 16, marginBottom: 16 }]}>
         <Text style={[typography.titleStrong, { flex: 1 }]}>
           Assigned Task

@@ -14,9 +14,11 @@ import ComingSoon from './src/screens/home/ComingSoon';
 import TaskScreen from './src/screens/home/Task';
 import Learning from './src/screens/home/Learning';
 import { FloatingButtonAdd } from './src/ui/FloatingButton';
-import { getData, KEY } from './src/utils/LocalStorage';
+import { getData, saveData, KEY } from './src/utils/LocalStorage';
+import { DEFAULT_USER_ROLE } from './src/utils/AppConstants';
 
 type RootStackParamList = {
+  Landing: undefined;
   Tabs: undefined;
   TaskDetails: { id: string; title?: string };
   ComingSoon: { title?: string } | undefined;
@@ -25,36 +27,28 @@ type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tabs = createBottomTabNavigator();
 
-function HomeScreen({ user, token, navigation }: { user: any; token: string; navigation: any }) {
-  const [role, setRole] = React.useState<string>('Associate');
-  const [showGrid, setShowGrid] = React.useState<boolean>(true);
+function HomeScreen({ user, token, navigation, onSignOut }: { user: any; token: string; navigation: any; onSignOut?: () => void }) {
+  const [role, setRole] = React.useState<string>(DEFAULT_USER_ROLE);
   useEffect(() => {
     (async () => {
       const v = await getData(KEY.USER_ROLE);
-      if (v) setRole(v);
+      if (v) {
+        setRole(v);
+      } else {
+        // Seed storage with the resource-defined default on first run
+        await saveData(KEY.USER_ROLE, DEFAULT_USER_ROLE);
+      }
     })();
   }, []);
-  if (showGrid) {
-    return (
-      <LandingGrid
-        userName={user?.displayName}
-        onSelect={(index, title) => {
-          if (index === 0) {
-            // Workforce Management -> open Dashboard
-            setShowGrid(false);
-          } else {
-            // Other tiles go to Coming Soon route
-            navigation.navigate('ComingSoon', { title });
-          }
-        }}
-      />
-    );
-  }
+  // Role toggling via resource file (DEFAULT_USER_ROLE) or storage only; UI bot toggle removed
   if (role === 'Manager') {
     return (
       <DashboardEx
+        token={token}
         onViewTasks={() => navigation.navigate('Tasks')}
-        onBack={() => setShowGrid(true)}
+        onOpenReports={() => navigation.navigate('ComingSoon', { title: 'Reports' })}
+  onOpenTraining={() => navigation.navigate('Learning')}
+  onSignOut={onSignOut}
       />
     );
   }
@@ -62,7 +56,7 @@ function HomeScreen({ user, token, navigation }: { user: any; token: string; nav
     <Dashboard
       token={token}
       onViewTasks={() => navigation.navigate('Tasks')}
-      onBack={() => setShowGrid(true)}
+  onSignOut={onSignOut}
     />
   );
 }
@@ -84,7 +78,6 @@ function TasksScreen({ token, navigation }: { token: string; navigation: any }) 
   if (error) return <Text style={styles.error}>{error}</Text>;
   return (
     <View style={{ flex: 1 }}>
-      <Toolbar title="Tasks" />
       <FlatList
         data={items}
         keyExtractor={(item) => item.id}
@@ -104,7 +97,7 @@ function TasksScreen({ token, navigation }: { token: string; navigation: any }) 
   );
 }
 
-function TrainingScreen({ token }: { token: string }) {
+function TrainingScreen({ token, navigation }: { token: string; navigation: any }) {
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -121,7 +114,6 @@ function TrainingScreen({ token }: { token: string }) {
   if (error) return <Text style={styles.error}>{error}</Text>;
   return (
     <View style={{ flex: 1 }}>
-      <Toolbar title="Training" />
       <FlatList
         data={items}
         keyExtractor={(item) => item.id}
@@ -138,7 +130,7 @@ function TrainingScreen({ token }: { token: string }) {
   );
 }
 
-function TaskDetailsScreen({ route, token }: { route: any; token: string }) {
+function TaskDetailsScreen({ route, token, navigation }: { route: any; token: string; navigation: any }) {
   const { id, title } = route.params || {};
   const [loading, setLoading] = useState(true);
   const [task, setTask] = useState<any | null>(null);
@@ -169,7 +161,7 @@ function TaskDetailsScreen({ route, token }: { route: any; token: string }) {
   const formatDueDate = (due?: any) => (due?.dateTime ? new Date(due.dateTime).toLocaleDateString() : 'No due date');
   return (
     <View style={{ flex: 1 }}>
-      <Toolbar title={title || 'Task Details'} />
+  <Toolbar title={title || 'Task Details'} onBack={() => navigation.goBack()} />
       <View style={{ padding: 16 }}>
         {loading ? (
           <ActivityIndicator />
@@ -274,18 +266,53 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Tabs" options={{ headerRight: () => (<Button title="Sign out" onPress={handleSignOut} />) }}>
+      <Stack.Navigator initialRouteName="Landing" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Landing">
+          {({ navigation: nav }: any) => (
+            <LandingGrid
+              userName={user?.displayName}
+              onSelect={(index: number, title: string) => {
+                if (index === 0) {
+                  // Workforce Management -> enter tabbed app
+                  nav.navigate('Tabs');
+                } else {
+                  nav.navigate('ComingSoon', { title });
+                }
+              }}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="Tabs">
           {() => (
-            <Tabs.Navigator>
-              <Tabs.Screen name="Home">
-                {(props: any) => <HomeScreen user={user} token={token} navigation={props.navigation} />}
+            <Tabs.Navigator
+              screenOptions={{
+                headerShown: false,
+                tabBarActiveTintColor: '#fff',
+                tabBarInactiveTintColor: '#E0E0FF',
+                tabBarStyle: { backgroundColor: '#5B57C7', borderTopWidth: 0 },
+              }}
+            >
+              <Tabs.Screen
+                name="Dashboard"
+                options={{
+                  tabBarLabel: 'Dashboard',
+                }}
+              >
+                {(props: any) => (
+                  <HomeScreen user={user} token={token} navigation={props.navigation} onSignOut={handleSignOut} />
+                )}
               </Tabs.Screen>
-              <Tabs.Screen name="Tasks">
-                {(props: any) => <TaskScreen token={token} onOpenTask={(id: string, title?: string) => props.navigation.navigate('TaskDetails', { id, title })} />}
+              <Tabs.Screen
+                name="Tasks"
+                options={{ tabBarLabel: 'Tasks' }}
+              >
+                {(props: any) => <TaskScreen token={token} onOpenTask={(id: string, title?: string) => props.navigation.navigate('TaskDetails', { id, title })} onSignOut={handleSignOut} />}
               </Tabs.Screen>
-              <Tabs.Screen name="Learning">
-                {() => <Learning token={token} />}
+              <Tabs.Screen
+                name="Learning"
+                options={{ tabBarLabel: 'Learning' }}
+              >
+                {(props: any) => <Learning token={token} navigation={props.navigation} onSignOut={handleSignOut} />}
               </Tabs.Screen>
             </Tabs.Navigator>
           )}

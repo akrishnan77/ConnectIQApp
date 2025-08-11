@@ -6,7 +6,7 @@ import { Toolbar } from '../../ui/Toolbar';
 import { getTodoTasks } from '../../graph';
 import { colors, typography } from '../../theme';
 
-export default function Dashboard({ token, onViewTasks, showToolbar = true, onBack }: { token: string; onViewTasks: () => void; showToolbar?: boolean; onBack?: () => void }) {
+export default function Dashboard({ token, onViewTasks, showToolbar = true, onBack, onSignOut }: { token: string; onViewTasks: () => void; showToolbar?: boolean; onBack?: () => void; onSignOut?: () => void }) {
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState<any[]>([]);
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function Dashboard({ token, onViewTasks, showToolbar = true, onBa
   const first = tasks[0];
   return (
     <View style={{ flex: 1 }}>
-  {showToolbar && <Toolbar title="Dashboard" onBack={onBack} />}
+  {showToolbar && <Toolbar title="Dashboard" onBack={onBack} variant="primary" onSignOut={onSignOut} />}
   <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 24 }}>
         {/* Announcements */}
         <AnnouncementCard
