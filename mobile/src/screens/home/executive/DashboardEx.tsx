@@ -3,10 +3,10 @@ import { Image, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { Card } from '../../../ui/Card';
 import { Toolbar } from '../../../ui/Toolbar';
 
-export default function DashboardEx({ onViewTasks, showToolbar = true }: { onViewTasks: () => void; showToolbar?: boolean }) {
+export default function DashboardEx({ onViewTasks, showToolbar = true, onBack }: { onViewTasks: () => void; showToolbar?: boolean; onBack?: () => void }) {
   return (
     <View style={{ flex: 1 }}>
-      {showToolbar && <Toolbar title="Dashboard" />}
+  {showToolbar && <Toolbar title="Dashboard" onBack={onBack} />}
       <View style={{ padding: 16 }}>
         <Card>
           <View style={[styles.headerRow]}>

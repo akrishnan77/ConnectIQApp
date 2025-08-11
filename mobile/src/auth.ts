@@ -16,9 +16,12 @@ const discovery = {
 };
 
 export async function getTokenAsync(): Promise<string> {
-  // Use native scheme for dev/build (no Expo proxy)
-  const redirectUri = makeRedirectUri({ scheme: REDIRECT_SCHEME, path: REDIRECT_PATH });
-  console.log('Native Auth redirect URI:', redirectUri);
+  const isExpoGo = (Constants as any).appOwnership === 'expo';
+  // In Expo Go we must use the proxy (exp://). In dev client/standalone, use native scheme.
+  const redirectUri = isExpoGo
+    ? AuthSession.makeRedirectUri({})
+    : makeRedirectUri({ scheme: REDIRECT_SCHEME, path: REDIRECT_PATH });
+  console.log(`${isExpoGo ? 'Expo Go' : 'Native'} Auth redirect URI:`, redirectUri);
 
   const request = new AuthSession.AuthRequest({
     clientId: MS_CLIENT_ID,

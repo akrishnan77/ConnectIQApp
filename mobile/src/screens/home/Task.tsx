@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { colors, typography } from '../../theme';
 import { FloatingButtonAdd } from '../../ui/FloatingButton';
 import { getTodoTasks } from '../../graph';
 
@@ -92,13 +93,13 @@ export default function TaskScreen({ token, onOpenTask }: { token: string; onOpe
         <TouchableOpacity onPress={() => onOpenTask(item.id, item.title)} style={styles.rowContainer}>
           <View style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
             <View style={styles.rowContainer}>
-              <Text style={[styles.titleSmallStatus, { flex: 1 }]}>Due: {formatDueDate(item.dueDateTime)}</Text>
+              <Text style={[typography.subtitle, { flex: 1 } as any]}>Due: {formatDueDate(item.dueDateTime)}</Text>
               <View style={[styles.itemContainerWithBg, { marginEnd: 8 }]}>
-                <Text style={[styles.titleSmallStatus, { color: priorityColor }]}>{getPriorityText(item.importance)}</Text>
+                <Text style={[typography.subtitle, { color: priorityColor }]}>{getPriorityText(item.importance)}</Text>
               </View>
             </View>
-            <Text style={[styles.title, { marginTop: 5 }]}>{item.title}</Text>
-            <Text style={[styles.titleSmallStatus, { color: statusColor }]}>{statusText}</Text>
+            <Text style={[typography.title, { marginTop: 5 }]}>{item.title}</Text>
+            <Text style={[typography.subtitle, { color: statusColor }]}>{statusText}</Text>
           </View>
           <Image source={require('../../../assets/images/home/icon_arrow.png')} style={styles.iconSmallest} />
         </TouchableOpacity>
@@ -125,7 +126,9 @@ export default function TaskScreen({ token, onOpenTask }: { token: string; onOpe
   return (
     <View style={styles.mainContainer}>
       <View style={[styles.rowHeader, { padding: 16, marginTop: 16, marginBottom: 16 }]}>
-        <Text style={[styles.title500, { flex: 1 }]}>Assigned Task</Text>
+        <Text style={[typography.titleStrong, { flex: 1 }]}>
+          Assigned Task
+        </Text>
         <TouchableOpacity>
           <Image source={require('../../../assets/images/home/icon_filter.png')} style={styles.iconSmallest} />
         </TouchableOpacity>
@@ -139,7 +142,7 @@ export default function TaskScreen({ token, onOpenTask }: { token: string; onOpe
       />
 
       <View style={[styles.rowHeader, { padding: 16, marginTop: 16, marginBottom: 16 }]}>
-        <Text style={styles.title500}>Overdue Task</Text>
+  <Text style={typography.titleStrong}>Overdue Task</Text>
       </View>
       <FlatList
         data={overdueTasks}
@@ -171,27 +174,13 @@ const styles = StyleSheet.create({
   itemContainer: {
     padding: 16,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: colors.border,
   },
   itemContainerWithBg: {
     backgroundColor: '#FDF3F4',
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 5,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: '400',
-  },
-  title500: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#242424',
-  },
-  titleSmallStatus: {
-    color: '#616161',
-    fontSize: 14,
-    fontWeight: '400',
   },
   iconSmallest: {
     width: 24,

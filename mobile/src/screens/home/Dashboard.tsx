@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { Card } from '../../ui/Card';
+import { AnnouncementCard, WorkdayCard } from '../../components/nrf_app/Card';
 import { Toolbar } from '../../ui/Toolbar';
 import { getTodoTasks } from '../../graph';
+import { colors, typography } from '../../theme';
 
-export default function Dashboard({ token, onViewTasks, showToolbar = true }: { token: string; onViewTasks: () => void; showToolbar?: boolean }) {
+export default function Dashboard({ token, onViewTasks, showToolbar = true, onBack }: { token: string; onViewTasks: () => void; showToolbar?: boolean; onBack?: () => void }) {
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState<any[]>([]);
   useEffect(() => {
@@ -15,44 +17,56 @@ export default function Dashboard({ token, onViewTasks, showToolbar = true }: { 
   const first = tasks[0];
   return (
     <View style={{ flex: 1 }}>
-      {showToolbar && <Toolbar title="Dashboard" />}
+  {showToolbar && <Toolbar title="Dashboard" onBack={onBack} />}
       <View style={{ padding: 16 }}>
+        {/* Announcements */}
+        <AnnouncementCard
+          style={{ marginBottom: 8 }}
+          items={[
+            { id: '1', text: 'Quarterly results town hall at 3 PM.' },
+            { id: '2', text: 'Safety training due this week.' },
+          ]}
+          onSeeAll={() => {}}
+        />
         {/* Shift card placeholder to mirror layout */}
         <Card>
           <View style={[styles.headerRow]}>
             <Image source={require('../../../assets/images/home/icon_shift.png')} style={styles.iconSmall} />
-            <Text style={styles.headerTitle}>Shift</Text>
+            <Text style={typography.headingSm}>Shift</Text>
           </View>
-          <Text style={[styles.title, { paddingHorizontal: 16 }]}>2 Clocked In</Text>
-          <Text style={[styles.subTitle, { paddingHorizontal: 16, marginBottom: 8 }]}>First shift - 8:00 AM - 5:00 PM</Text>
+          <Text style={[typography.title, { paddingHorizontal: 16 }]}>2 Clocked In</Text>
+          <Text style={[typography.subtitle, { paddingHorizontal: 16, marginBottom: 8 }]}>First shift - 8:00 AM - 5:00 PM</Text>
           <TouchableOpacity style={[styles.button, { marginLeft: 16, marginBottom: 16 }]}>
-            <Text style={styles.buttonText}>Details</Text>
+            <Text style={[typography.button, { color: colors.primary }]}>Details</Text>
           </TouchableOpacity>
         </Card>
 
-        {/* Tasks */}
+  {/* Tasks */}
         <Card>
           <View style={styles.headerRow}>
             <Image source={require('../../../assets/images/home/icon_task_list.png')} style={styles.iconSmall} />
-            <Text style={styles.headerTitle}>Tasks</Text>
+            <Text style={typography.headingSm}>Tasks</Text>
             <View style={{ flex: 1 }} />
-            <Text style={[styles.headerCount]}>{tasks.length > 0 ? `1/${tasks.length} Task` : '0 Task'}</Text>
+            <Text style={typography.subtitle}>{tasks.length > 0 ? `1/${tasks.length} Task` : '0 Task'}</Text>
           </View>
           {loading ? (
             <View style={{ padding: 16, alignItems: 'center' }}><ActivityIndicator /></View>
           ) : tasks.length > 0 ? (
             <View style={{ padding: 16, flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={styles.title}>{first?.title}</Text>
+              <Text style={typography.title}>{first?.title}</Text>
               <View style={{ flex: 1 }} />
-              <Text style={styles.statusText}>{statusText(first?.status)}</Text>
+              <Text style={typography.subtitle}>{statusText(first?.status)}</Text>
             </View>
           ) : (
-            <View style={{ padding: 16 }}><Text style={styles.title}>No tasks found.</Text></View>
+            <View style={{ padding: 16 }}><Text style={typography.title}>No tasks found.</Text></View>
           )}
           <TouchableOpacity style={[styles.button, { marginLeft: 16, marginBottom: 16 }]} onPress={onViewTasks}>
-            <Text style={styles.buttonText}>View All</Text>
+            <Text style={[typography.button, { color: colors.primary }]}>View All</Text>
           </TouchableOpacity>
         </Card>
+
+  {/* Workday */}
+  <WorkdayCard subtitle="Next shift starts tomorrow 8:00 AM - 5:00 PM" onOpen={() => {}} />
       </View>
     </View>
   );
@@ -75,11 +89,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconSmall: { width: 24, height: 24, marginRight: 8 },
-  headerTitle: { fontSize: 16, fontWeight: '600', color: '#424242' },
-  headerCount: { fontSize: 14, color: '#424242' },
-  title: { fontSize: 16, fontWeight: '500', color: '#242424' },
-  subTitle: { fontSize: 14, color: '#616161' },
-  statusText: { fontSize: 14, color: '#616161' },
   button: { borderWidth: 1, borderColor: '#5B57C7', borderRadius: 4, paddingVertical: 6, paddingHorizontal: 12, alignSelf: 'flex-start' },
-  buttonText: { color: '#5B57C7', fontSize: 14, fontWeight: '500' },
+  
 });

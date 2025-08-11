@@ -14,3 +14,22 @@ export const spacing = {
   md: 12,
   lg: 16,
 };
+
+export const typography = {
+  // Headings
+  h6: { fontSize: 20 as const, fontWeight: '500' as const, color: colors.text },
+  headingSm: { fontSize: 16 as const, fontWeight: '600' as const, color: colors.textMuted },
+
+  // Titles / Subtitles
+  title: { fontSize: 16 as const, fontWeight: '400' as const, color: colors.text },
+  titleStrong: { fontSize: 16 as const, fontWeight: '500' as const, color: colors.text },
+  subtitle: { fontSize: 14 as const, fontWeight: '400' as const, color: colors.textMuted },
+
+  // Body
+  body: { fontSize: 14 as const, fontWeight: '400' as const, color: colors.text },
+  bodyMuted: { fontSize: 14 as const, fontWeight: '400' as const, color: '#616161' as const },
+
+  // Button / Link (color may be overridden at use site)
+  button: { fontSize: 14 as const, fontWeight: '500' as const, color: colors.text },
+  link: { fontSize: 14 as const, fontWeight: '500' as const, color: colors.primary },
+};

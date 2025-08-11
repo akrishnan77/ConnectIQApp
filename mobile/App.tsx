@@ -8,7 +8,9 @@ import { getTodoTasks, getTrainingFiles, getTodoTaskById } from './src/graph';
 import { Toolbar } from './src/ui/Toolbar';
 import { Card } from './src/ui/Card';
 import Dashboard from './src/screens/home/Dashboard';
+import LandingGrid from './src/screens/home/LandingGrid';
 import DashboardEx from './src/screens/home/executive/DashboardEx';
+import ComingSoon from './src/screens/home/ComingSoon';
 import TaskScreen from './src/screens/home/Task';
 import Learning from './src/screens/home/Learning';
 import { FloatingButtonAdd } from './src/ui/FloatingButton';
@@ -17,6 +19,7 @@ import { getData, KEY } from './src/utils/LocalStorage';
 type RootStackParamList = {
   Tabs: undefined;
   TaskDetails: { id: string; title?: string };
+  ComingSoon: { title?: string } | undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -24,16 +27,34 @@ const Tabs = createBottomTabNavigator();
 
 function HomeScreen({ user, token, navigation }: { user: any; token: string; navigation: any }) {
   const [role, setRole] = React.useState<string>('Associate');
+  const [showGrid, setShowGrid] = React.useState<boolean>(true);
   useEffect(() => {
     (async () => {
       const v = await getData(KEY.USER_ROLE);
       if (v) setRole(v);
     })();
   }, []);
+  if (showGrid) {
+    return (
+      <LandingGrid
+        userName={user?.displayName}
+        onSelect={(index, title) => {
+          if (index === 0) {
+            // Workforce Management -> open Dashboard
+            setShowGrid(false);
+          } else {
+            // Other tiles go to Coming Soon route
+            navigation.navigate('ComingSoon', { title });
+          }
+        }}
+      />
+    );
+  }
   if (role === 'Manager') {
     return (
       <DashboardEx
         onViewTasks={() => navigation.navigate('Tasks')}
+        onBack={() => setShowGrid(true)}
       />
     );
   }
@@ -41,6 +62,7 @@ function HomeScreen({ user, token, navigation }: { user: any; token: string; nav
     <Dashboard
       token={token}
       onViewTasks={() => navigation.navigate('Tasks')}
+      onBack={() => setShowGrid(true)}
     />
   );
 }
@@ -271,6 +293,7 @@ export default function App() {
         <Stack.Screen name="TaskDetails">
           {(props: any) => <TaskDetailsScreen {...props} token={token} />}
         </Stack.Screen>
+  <Stack.Screen name="ComingSoon" component={ComingSoon} />
       </Stack.Navigator>
     </NavigationContainer>
   );
