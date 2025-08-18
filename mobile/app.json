@@ -37,8 +37,7 @@
       "tenant": "common",
       "scopes": ["User.Read", "Tasks.ReadWrite", "Files.ReadWrite"],
       "redirectScheme": "connectiq",
-  "redirectPath": "auth",
-  "expRedirectUri": "exp://j_bv00o-anonymous-8081.exp.direct/--/auth"
+      "redirectPath": "auth"
     }
   }
 }

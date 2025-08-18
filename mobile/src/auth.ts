@@ -26,15 +26,9 @@ export async function getTokenAsync(): Promise<string> {
   let redirectUri = makeRedirectUri({ scheme: REDIRECT_SCHEME, path: REDIRECT_PATH });
   let useProxy = isExpoGo;
 
-  if (EXP_REDIRECT_URI_OVERRIDE) {
-    redirectUri = EXP_REDIRECT_URI_OVERRIDE;
-    useProxy = false;
-    console.log('Using explicit redirect override:', redirectUri);
-  } else if (isExpoGo) {
-    console.log('Expo Go using Expo Auth Proxy');
-  } else {
+
     console.log('Native scheme redirect URI:', redirectUri);
-  }
+  
 
   const request = new AuthSession.AuthRequest({
     clientId: MS_CLIENT_ID,
